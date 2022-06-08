@@ -49,34 +49,34 @@ const getLightById = async (name) => {
 };
 
 // Control a light by light ID and the desired state
-const controlLight = async (light, on, sat, bri, hue) => {
+const controlLight = async (light, on, hue, sat, bri) => {
   const url = `http://${BRIDGE_IP}/api/${USER_ID}/lights/${light}/state`;
   try {
     return await axios.put(url, {
       on,
+      ...(hue && { hue }),
       ...(sat && { sat }),
       ...(bri && { bri }),
-      ...(hue && { hue }),
     });
   } catch (err) {
     console.error(err);
   }
 };
 
-const controlAllLights = async (on, sat, bri, hue) => {
+const controlAllLights = async (on, hue, sat, bri) => {
   Object.values(ids).forEach((id) => {
-    controlLight(id, on, sat, bri, hue);
+    controlLight(id, on, hue, sat, bri);
   });
 };
 
 const setAllToRandomColor = async (sat = 254, bri = 254) => {
   const randomHue = hues.random();
-  controlAllLights(true, sat, bri, randomHue);
+  controlAllLights(true, randomHue, sat, bri);
 };
 
 const setLightToRandomColor = async (id, sat = 254, bri = 254) => {
   const randomHue = hues.random();
-  controlLight(id, true, sat, bri, randomHue);
+  controlLight(id, true, randomHue, sat, bri);
 };
 
 const timer = (ms) => new Promise((res) => setTimeout(res, ms));
